@@ -121,6 +121,14 @@ export async function getRelatedProducts(product: ProductDetail, limit = 3): Pro
   });
 }
 
+/** Whole-dollar price range of the catalog, rounded out to $5 steps for the price slider. */
+export async function getPriceBounds(): Promise<{ min: number; max: number }> {
+  const { _min, _max } = await db.product.aggregate({ _min: { priceCents: true }, _max: { priceCents: true } });
+  const min = Math.floor((_min.priceCents ?? 0) / 100 / 5) * 5;
+  const max = Math.ceil((_max.priceCents ?? 10000) / 100 / 5) * 5;
+  return { min, max: Math.max(max, min + 5) };
+}
+
 /** Loads just what pricing needs for a set of product IDs. */
 export async function getProductsForPricing(ids: string[]) {
   return db.product.findMany({

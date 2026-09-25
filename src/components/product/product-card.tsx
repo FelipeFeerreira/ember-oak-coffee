@@ -12,7 +12,7 @@ export function ProductCard({ product, priority = false }: { product: ProductSum
   const lowStock = product.stock > 0 && product.stock <= LOW_STOCK_THRESHOLD;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgb(42_27_18/0.04)] transition-shadow hover:shadow-[0_12px_32px_-12px_rgb(42_27_18/0.25)]">
+    <article className="group flex w-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgb(42_27_18/0.04)] transition-shadow hover:shadow-[0_12px_32px_-12px_rgb(42_27_18/0.25)]">
       <Link href={href} tabIndex={-1} aria-hidden="true" className="relative block aspect-square overflow-hidden bg-latte">
         <Image
           src={product.imageUrl}
