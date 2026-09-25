@@ -44,7 +44,7 @@ export const policies: Policy[] = [
   },
   {
     id: "orders",
-    title: "Orders & payment",
+    title: "Payment & pricing",
     points: [
       `We accept all major credit and debit cards, Apple Pay and Google Pay through our secure payment partner, Stripe.`,
       `Order changes or cancellations are possible until your coffee is roasted. Email us with your order number as soon as possible.`,
