@@ -19,8 +19,8 @@ export type PriceBounds = { min: number; max: number };
 
 type Props = { filters: CatalogFilters; priceBounds: PriceBounds; activeCount: number };
 
-export function CatalogFiltersPanel({ filters, priceBounds, activeCount }: Props) {
-  const { pending, update, toggleValue, setValue } = useCatalogUrl();
+export function CatalogFiltersPanel({ filters: serverFilters, priceBounds, activeCount }: Props) {
+  const { filters, pending, update, toggleValue, setValue } = useCatalogUrl(serverFilters);
   const id = useId();
 
   return (
@@ -82,9 +82,9 @@ export function CatalogFiltersPanel({ filters, priceBounds, activeCount }: Props
 
       <PriceRange
         // Re-mount when the URL changes so the slider reflects shared or back-button URLs.
-        key={`${filters.minPrice}-${filters.maxPrice}`}
+        key={`${serverFilters.minPrice}-${serverFilters.maxPrice}`}
         bounds={priceBounds}
-        initial={[filters.minPrice ?? priceBounds.min, filters.maxPrice ?? priceBounds.max]}
+        initial={[serverFilters.minPrice ?? priceBounds.min, serverFilters.maxPrice ?? priceBounds.max]}
         onCommit={([min, max]) =>
           update((params) => {
             if (min > priceBounds.min) params.set("minPrice", String(min));

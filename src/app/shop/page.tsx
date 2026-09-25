@@ -47,7 +47,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
                 {products.length} {products.length === 1 ? "product" : "products"}
               </h2>
             </div>
-            <SortSelect value={filters.sort} />
+            <SortSelect filters={filters} />
           </div>
 
           {products.length > 0 ? (

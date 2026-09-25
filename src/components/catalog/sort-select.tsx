@@ -2,10 +2,10 @@
 
 import { useId } from "react";
 import { useCatalogUrl } from "@/components/catalog/use-catalog-url";
-import { SORT_OPTIONS, sortLabels, type SortOption } from "@/lib/catalog-filters";
+import { SORT_OPTIONS, sortLabels, type CatalogFilters } from "@/lib/catalog-filters";
 
-export function SortSelect({ value }: { value: SortOption }) {
-  const { setValue } = useCatalogUrl();
+export function SortSelect({ filters: serverFilters }: { filters: CatalogFilters }) {
+  const { filters, setValue } = useCatalogUrl(serverFilters);
   const id = useId();
 
   return (
@@ -15,7 +15,7 @@ export function SortSelect({ value }: { value: SortOption }) {
       </label>
       <select
         id={id}
-        value={value}
+        value={filters.sort}
         onChange={(event) => setValue("sort", event.target.value === "featured" ? undefined : event.target.value)}
         className="h-10 rounded-lg border border-input bg-card px-3 text-sm text-espresso focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
