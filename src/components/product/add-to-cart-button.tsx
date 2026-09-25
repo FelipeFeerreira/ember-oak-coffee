@@ -38,7 +38,13 @@ export function AddToCartButton({ product, grind, quantity = 1, size = "default"
   }
 
   return (
-    <Button size={size} className={className} onClick={handleClick} disabled={soldOut}>
+    <Button
+      size={size}
+      className={className}
+      onClick={handleClick}
+      disabled={soldOut}
+      aria-label={soldOut ? `${product.name} is sold out` : `Add ${product.name} to cart`}
+    >
       <ShoppingBag aria-hidden="true" />
       {soldOut ? "Sold out" : "Add to cart"}
     </Button>
