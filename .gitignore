@@ -1,0 +1,53 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# environment variables (only the documented template is committed)
+.env*
+!.env.example
+
+# tests
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# database dumps
+*.sql.gz
+*.dump
+/prisma/*.db
+
+# generated Prisma client
+/src/generated/
+
+# portfolio assets (high-res images for Upwork, never committed)
+/portfolio-assets/
+
+# vercel
+.vercel
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.pem
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
