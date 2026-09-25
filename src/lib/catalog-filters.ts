@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Prisma } from "@/generated/prisma/client";
 import { BREW_METHODS, PRODUCT_TYPES, ROAST_LEVELS } from "@/lib/product-labels";
 
 export const SORT_OPTIONS = ["featured", "price-asc", "price-desc", "name"] as const;
@@ -75,4 +76,19 @@ export function countActiveFilters(filters: CatalogFilters): number {
     (filters.minPrice !== undefined ? 1 : 0) +
     (filters.maxPrice !== undefined ? 1 : 0)
   );
+}
+
+/** Translates parsed filters into a Prisma `where` clause. */
+export function buildCatalogWhere(filters: CatalogFilters): Prisma.ProductWhereInput {
+  const where: Prisma.ProductWhereInput = {};
+  if (filters.type) where.type = filters.type;
+  if (filters.roast.length) where.roastLevel = { in: filters.roast };
+  if (filters.brew.length) where.brewMethods = { hasSome: filters.brew };
+  if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+    where.priceCents = {
+      ...(filters.minPrice !== undefined && { gte: filters.minPrice * 100 }),
+      ...(filters.maxPrice !== undefined && { lte: filters.maxPrice * 100 }),
+    };
+  }
+  return where;
 }

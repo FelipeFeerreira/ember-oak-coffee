@@ -1,7 +1,7 @@
 import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
-import type { CatalogFilters } from "@/lib/catalog-filters";
+import { buildCatalogWhere, type CatalogFilters } from "@/lib/catalog-filters";
 
 /**
  * The product shape sent to the browser. Plain data only (no Date objects),
@@ -55,21 +55,6 @@ const detailSelect = {
   process: true,
   weightGrams: true,
 } satisfies Prisma.ProductSelect;
-
-/** Builds the Prisma `where` clause for catalog filters. Exported for tests. */
-export function buildCatalogWhere(filters: CatalogFilters): Prisma.ProductWhereInput {
-  const where: Prisma.ProductWhereInput = {};
-  if (filters.type) where.type = filters.type;
-  if (filters.roast.length) where.roastLevel = { in: filters.roast };
-  if (filters.brew.length) where.brewMethods = { hasSome: filters.brew };
-  if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-    where.priceCents = {
-      ...(filters.minPrice !== undefined && { gte: filters.minPrice * 100 }),
-      ...(filters.maxPrice !== undefined && { lte: filters.maxPrice * 100 }),
-    };
-  }
-  return where;
-}
 
 function orderByFor(sort: CatalogFilters["sort"]): Prisma.ProductOrderByWithRelationInput[] {
   switch (sort) {
