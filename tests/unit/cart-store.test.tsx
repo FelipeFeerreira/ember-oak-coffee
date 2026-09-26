@@ -36,6 +36,15 @@ describe("cart store", () => {
     expect(JSON.parse(window.localStorage.getItem(STORAGE_KEY)!)).toEqual([]);
   });
 
+  it("clears a confirmed purchase only when the current cart still matches", async () => {
+    const { cart } = await loadStore();
+    cart.add(item, 2);
+    cart.clearIfMatches([{ productId: item.productId, grind: item.grind, quantity: 1 }]);
+    expect(JSON.parse(window.localStorage.getItem(STORAGE_KEY)!)[0].quantity).toBe(2);
+    cart.clearIfMatches([{ productId: item.productId, grind: item.grind, quantity: 2 }]);
+    expect(JSON.parse(window.localStorage.getItem(STORAGE_KEY)!)).toEqual([]);
+  });
+
   it("ignores corrupted storage instead of crashing", async () => {
     window.localStorage.setItem(STORAGE_KEY, "{not json");
     const { useCartCount } = await loadStore();

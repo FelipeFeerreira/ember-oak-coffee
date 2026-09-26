@@ -59,7 +59,76 @@ model Product {
   sortOrder    Int          @default(0)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+  orderItems   OrderItem[]
 
   @@index([type])
   @@index([roastLevel])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PAYMENT_REVIEW
+  EXPIRED
+  SHIPPED
+  DELIVERED
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  number            String      @unique
+  checkoutKey       String      @unique
+  requestHash       String
+  status            OrderStatus @default(PENDING)
+  email             String?
+  customerName      String?
+  shippingAddress   Json?
+  stripeSessionId   String?     @unique
+  paymentIntentId   String?     @unique
+  subtotalCents     Int
+  shippingCents     Int
+  totalCents        Int
+  currency          String      @default("usd")
+  checkoutOrigin    String
+  trackingNumber    String?
+  paidAt            DateTime?
+  emailSentAt       DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  items             OrderItem[]
+  events            StripeEvent[]
+
+  @@index([email, number])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product @relation(fields: [productId], references: [id])
+  name           String
+  grind          String?
+  quantity       Int
+  unitPriceCents Int
+
+  @@index([orderId])
+}
+
+// The event and its business changes commit together, or neither commits.
+model StripeEvent {
+  id          String   @id
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  processedAt DateTime @default(now())
+}
+
+// Shared across serverless instances; no customer email or raw IP is stored here.
+model RateLimit {
+  key       String   @id
+  count     Int
+  expiresAt DateTime
+
+  @@index([expiresAt])
 }

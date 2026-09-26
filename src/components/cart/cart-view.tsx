@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CheckoutButton } from "@/components/checkout/checkout-button";
 import { grindLabels, lineKey } from "@/lib/cart/schema";
 import { cart, useCartItems, useCartReady } from "@/lib/cart/store";
 import { useCartQuote } from "@/lib/cart/use-cart-quote";
@@ -215,9 +216,8 @@ function OrderSummary({ quote, loading, error }: { quote: CartQuote | null; load
         </p>
       )}
 
-      <Button size="lg" className="mt-6 w-full" disabled>
-        Checkout — coming soon
-      </Button>
+      <CheckoutButton total={quote?.totalCents} disabled={loading || error || !quote?.itemCount ||
+        !!quote.removedProductIds.length || quote.lines.some((line) => !!line.issue)} />
       <p className="mt-3 text-center text-xs text-muted-foreground">
         Prices are confirmed by our server. Oregon has no sales tax.
       </p>

@@ -28,6 +28,7 @@ export function SiteFooter() {
           <h2 className="mb-3 font-sans text-xs font-semibold tracking-[0.18em] text-latte/70 uppercase">Help</h2>
           <ul className="space-y-2 text-sm">
             <li><Link className="hover:text-cream hover:underline" href="/faq">FAQ &amp; policies</Link></li>
+            <li><Link className="hover:text-cream hover:underline" href="/track-order">Track your order</Link></li>
             <li><Link className="hover:text-cream hover:underline" href="/about">Our story</Link></li>
             <li><span className="text-latte/80">{STORE.email}</span></li>
           </ul>

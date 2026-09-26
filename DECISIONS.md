@@ -201,3 +201,111 @@ What we did, and why each matters:
 - Small commits following **Conventional Commits** (`feat(cart): …`, `fix(a11y): …`, `test(e2e): …`), with a body
   explaining *why* when it isn't obvious. Every commit passes typecheck.
 - Secrets never go in git: `.env.local` is ignored and `.env.example` documents every variable.
+
+## Phase 2 — Checkout and orders
+
+### 17. Hosted Stripe Checkout, strictly in test mode
+
+**What.** The server creates a hosted Checkout Session with the Stripe SDK. Only test keys
+are accepted. The browser sends product IDs, quantities, grind and the total it last saw.
+That total is only a change detector; the database supplies every price charged.
+
+**Why.** Stripe hosts the payment form, so our server never handles card numbers. If the
+catalog changed after the cart loaded, checkout asks the customer to review it instead of
+silently charging a different amount. A stable retry key reuses one order and Stripe
+session after a network interruption. Order line names/prices are snapshots, so changing
+the catalog later cannot rewrite a receipt.
+
+**Trade-off.** The customer leaves the store to pay. No Stripe public key or Stripe.js
+dependency is needed. Only card payments are enabled; slower payment methods need their
+own completion/failure event handling before they can be supported.
+
+### 18. Payment truth comes from a signed webhook
+
+**What.** `/api/stripe/webhook` verifies Stripe's signature against the exact raw body,
+rejects live events and validates the session, amount and currency against the pending
+order. Neither visiting the success URL nor polling confirmation changes payment state.
+
+**Why.** A URL can be typed by anyone. A signed server-to-server event proves that our
+payment partner reported payment. A unique event record prevents event retries from
+being applied twice, and locking the order serializes concurrent deliveries. The status
+check also protects against two different event IDs describing the same payment.
+
+> **Interview:** "The confirmation page reads status. Only the signed webhook can confirm payment."
+
+### 19. Stock and confirmation are one atomic change
+
+**What.** PostgreSQL locks the order and its products. In the same transaction it subtracts
+stock, marks the order paid and records the event. Product quantities are combined across
+grinds; all products are locked in a consistent order to avoid deadlocks.
+
+**Why.** If any write fails, the transaction rolls back everything. There can be no paid
+confirmation with only half of its stock updates committed. Tests exercise an actual
+database constraint failure to prove this rollback, plus simultaneous webhook requests.
+
+**Trade-off.** Stock is not reserved during the hosted checkout. If another purchase
+takes the last units before payment completes, the entire second order becomes
+`PAYMENT_REVIEW`, with no stock deduction. The receipt and email explain that payment was
+received but the order needs review. No negative stock, invented delivery promise or
+automatic refund is produced. A real shop needs inventory reservations or a staffed
+review/refund process before launch. This portfolio runs only test payments.
+
+### 20. Email failure cannot undo a successful payment
+
+**What.** After the payment transaction commits, Resend sends a plain-text confirmation.
+Without its key, the same message is logged locally. A per-order sent marker and a stable
+Resend idempotency key handle retries; an email error makes the webhook retry without
+repeating the stock transaction.
+
+**Why.** Email is an external service and may be unavailable. It should never make a
+paid order disappear. Plain text is accessible and avoids inserting customer strings
+into HTML. Delivery is serialized with a separate order lock.
+
+**Trade-off.** Email currently runs within the webhook's request and holds a short database
+transaction (15-second timeout). A larger store should move this to a durable outbox and
+background worker. Resend's key retention is 24 hours, so an extremely delayed retry
+after a crash between send and saving the marker can duplicate an email. Local previews
+contain the recipient; use fictional data and keep the logs private.
+
+### 21. Private order tracking without customer accounts
+
+**What.** A random order number and normalized checkout email must both match. The lookup
+uses a POST body and returns only status, item/price snapshots and tracking number.
+It excludes addresses, email and payment IDs. Responses are not cached. The confirmation
+page uses the unguessable Stripe Session ID as a private receipt link with no-referrer
+and no-index metadata.
+
+**Why.** This matches a small guest-checkout store without adding account management.
+Credentials stay out of search URLs. Both a wrong order number and a wrong email produce
+the same failure message. The same lookup function can support the chatbot later.
+
+### 22. Shared limits and bounded inputs
+
+**What.** Checkout and tracking use atomic fixed-window counters in Postgres. Limits are
+15 checkout and 10 lookup attempts per IP per 15 minutes. IPs are hashed before storage.
+Requests have body-size limits, Zod validation and same-origin checks.
+
+**Why.** An in-memory counter would restart or differ across serverless instances. A
+single SQL upsert makes simultaneous requests count correctly. The intended Vercel proxy
+must overwrite forwarded-IP headers; directly trusting client-provided headers on an
+unprotected Node server is not sufficient. Expired counter cleanup belongs to phase 6.
+
+### 23. Real database tests, simulated external services
+
+**What.** Integration tests use a separate local `_test` database. The runner checks the
+host/name before migrations and substitutes Stripe/Resend outbound calls. Stripe's real
+SDK generates and verifies webhook signatures. E2E tests intercept the Stripe redirect
+boundary and exercise the browser on desktop/mobile.
+
+**Why.** Mocks cannot prove database transaction and locking behavior. An isolated real
+Postgres database can, without changing development stock or contacting a paid service.
+Hosted payment and delivered-email checks remain explicit manual activation steps when
+the owner configures test credentials. TypeScript permits `.mts` imports because configs
+share definitions and compilation is `noEmit`.
+
+**Versions checked.** Stripe SDK 22.6.2 and Resend SDK 6.30.0 were checked against npm
+before installation. No account or external environment was configured.
+
+References: [Stripe Checkout](https://docs.stripe.com/api/checkout/sessions/create),
+[Stripe webhooks](https://docs.stripe.com/webhooks),
+[Resend idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys).
