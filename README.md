@@ -11,15 +11,20 @@ A small online coffee store with an AI shopping assistant, built as a portfolio 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 + shadcn/ui · PostgreSQL + Prisma 7 · Zod ·
 Vitest + React Testing Library · Playwright
 
-Stripe Checkout (test mode) · Resend (optional confirmation emails)
+Stripe Checkout (test mode) · Resend (optional confirmation emails) · Anthropic SDK (Claude Haiku 4.5)
 
 ## Current progress
 
-The storefront is complete. Phase 2 adds test checkout, signed payment webhooks,
-transactional stock updates, confirmation emails and order tracking. The AI assistant,
-owner dashboard and deployment are planned in later phases.
+The storefront and test checkout are complete. Phase 3 adds a floating AI coffee guide,
+database-backed product recommendations, private order lookup and a human-support form.
+The owner dashboard and deployment are planned in later phases.
 
 See [the project plan](docs/PROJECT_PLAN.md) and [the checkout guide](docs/CHECKOUT.md).
+See [the chat guide](docs/CHAT.md) for tools, privacy, cost controls and local setup.
+
+The chat opens on every page. Without `ANTHROPIC_API_KEY`, it explains that AI replies
+are unavailable while the FAQ, order-tracking link and support-request form still work.
+Support requests are saved locally; no real support response is sent in this demo.
 
 ## Run it locally
 
