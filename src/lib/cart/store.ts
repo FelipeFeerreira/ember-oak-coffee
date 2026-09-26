@@ -6,6 +6,7 @@ import {
   MAX_CART_LINES,
   MAX_QUANTITY_PER_LINE,
   storedCartSchema,
+  type CartItemInput,
   type StoredCartItem,
 } from "@/lib/cart/schema";
 
@@ -96,6 +97,14 @@ export const cart = {
   },
   clear() {
     commit(EMPTY);
+  },
+  clearIfMatches(purchased: CartItemInput[]) {
+    ensureLoaded();
+    // Do not erase additions or quantity changes made in another tab during checkout.
+    if (items.length === purchased.length && items.every((item) =>
+      purchased.some((line) => lineKey(line) === lineKey(item) && line.quantity === item.quantity))) {
+      commit(EMPTY);
+    }
   },
 };
 
