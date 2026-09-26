@@ -11,6 +11,16 @@ A small online coffee store with an AI shopping assistant, built as a portfolio 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 + shadcn/ui · PostgreSQL + Prisma 7 · Zod ·
 Vitest + React Testing Library · Playwright
 
+Stripe Checkout (test mode) · Resend (optional confirmation emails)
+
+## Current progress
+
+The storefront is complete. Phase 2 adds test checkout, signed payment webhooks,
+transactional stock updates, confirmation emails and order tracking. The AI assistant,
+owner dashboard and deployment are planned in later phases.
+
+See [the project plan](docs/PROJECT_PLAN.md) and [the checkout guide](docs/CHECKOUT.md).
+
 ## Run it locally
 
 Requirements: Node.js 24+, Docker.
@@ -28,11 +38,22 @@ npm run dev                     # http://localhost:3100
 
 ```bash
 npm test            # unit and component tests (Vitest)
+npm run test:integration # isolated local Postgres tests; Docker must be running
 npm run test:e2e    # end-to-end tests (Playwright, desktop + mobile)
 npm run typecheck
 npm run lint
+npm run build
+npm audit
 ```
 
 ## Why things are built this way
 
 See [DECISIONS.md](./DECISIONS.md) for every important technical decision, explained in plain language.
+
+On Windows PowerShell, use `npm.cmd` and `npx.cmd` if the system blocks `.ps1` scripts.
+No execution-policy change is needed.
+
+Integration tests automatically apply migrations to `ember_oak_test`, refuse remote
+or non-test databases, and replace Stripe/Resend network calls with test doubles.
+Playwright covers the redirect boundary using an intercepted Stripe URL; it does not
+perform an actual hosted Stripe payment. See the checkout guide for that manual check.
