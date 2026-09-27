@@ -17,10 +17,14 @@ Stripe Checkout (test mode) · Resend (optional confirmation emails) · Anthropi
 
 The storefront and test checkout are complete. Phase 3 adds a floating AI coffee guide,
 database-backed product recommendations, private order lookup and a human-support form.
-The owner dashboard and deployment are planned in later phases.
+Phase 4 adds a private owner dashboard with orders, transcripts, editable support
+requests and assistant metrics. Deployment remains a later phase.
 
 See [the project plan](docs/PROJECT_PLAN.md) and [the checkout guide](docs/CHECKOUT.md).
 See [the chat guide](docs/CHAT.md) for tools, privacy, cost controls and local setup.
+See [the owner dashboard guide](docs/ADMIN.md) for local access and metric definitions.
+Generate a local owner token with `npm.cmd run admin:token`, restart the app and open
+[the owner dashboard](http://localhost:3100/admin). The token stays in `.env.local`.
 
 The chat opens on every page. Without `ANTHROPIC_API_KEY`, it explains that AI replies
 are unavailable while the FAQ, order-tracking link and support-request form still work.

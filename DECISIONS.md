@@ -432,3 +432,55 @@ at the actual Add to cart button gives more useful evidence than counting text m
 sales. Network failures may lose a click; analytics failure must never block shopping.
 Reopening a conversation reloads product cards from Postgres to keep displayed prices
 and stock current, rather than treating old recommendation snapshots as live facts.
+
+### 31. Exchange the owner token for a revocable session
+
+**What.** `/admin` accepts a long random `ADMIN_TOKEN` through a password form and
+same-origin POST. A successful sign-in creates a separate eight-hour owner session
+in Postgres and an opaque HttpOnly cookie. Cookie values and the configured secret
+are stored only as hashes. Production cookies require HTTPS. Missing configuration
+disables access. The local helper creates a secret without printing it.
+
+**Why.** Putting an admin secret in a query string would expose it in browser history,
+logs, referrers and portfolio screenshots. A database session can be revoked by logout,
+and binding it to the configured-secret hash makes rotation invalidate old sessions.
+Private data functions and update handlers each check access, rather than trusting
+that a visitor happened to pass through a protected layout.
+
+**Limits.** This is the requested single-owner demo gate. It has no named staff
+accounts, MFA or identity recovery. A real client deployment should use an established
+identity provider. Persistent per-IP and global login limits reduce guessing; the
+deployment proxy must overwrite forwarded IP headers. No external identity service
+or account was configured in this phase.
+
+### 32. Make the dashboard's numbers explainable
+
+**What.** Conversation counts exclude empty widget sessions. Conversion counts distinct
+conversations with a recorded cart addition, not raw click totals. Product rankings
+count saved recommendation cards; common questions group the existing assistant topics.
+Summary metrics use all retained records; the activity chart shows seven UTC days.
+
+**Why.** An owner needs to understand what a number means before using it. A cart click
+is interest, not a paid sale. Pending and review orders do not inflate the confirmed
+payment total. The interface labels test payments and estimated model costs. Empty
+states use actual zeros rather than fabricated demo sales. Topic grouping includes
+offline responses so an unavailable assistant is visible rather than hidden.
+
+**Trade-off.** These queries summarize the current database rather than a warehouse
+of historical events. Retention cleanup will change totals. Browser events can be lost,
+and concurrent reads can briefly observe slightly different moments of activity.
+Twenty-row pagination bounds private list payloads; the small demo does not need a
+new charting library or scheduled aggregation service.
+
+### 33. Separate owner work from shopping, and prevent stale lead edits
+
+**What.** The owner workspace has its own navigation and no shopping chat widget.
+Orders remain read-only. Leads can move between Open, Contacted and Closed. Each write
+includes the status the owner originally saw, which is checked atomically in Postgres.
+
+**Why.** Two tabs should not silently overwrite each other's changes. A stale update
+returns a conflict and asks for a refresh. Changing a label does not send an email or
+promise a customer response. Payment confirmation stays exclusively in the signed
+webhook path. The dashboard selects only needed private fields, excluding addresses,
+payment identifiers and session hashes. Authenticated browser tests disable traces
+because request recordings could capture the login secret.

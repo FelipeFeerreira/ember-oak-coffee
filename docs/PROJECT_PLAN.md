@@ -12,8 +12,8 @@ and deployment require approval. Never rewrite `main` history.
 | --- | --- | --- |
 | 1 — Store | Home, filtered catalog, product detail, persistent cart, About, FAQ, seeded Postgres products, accessible premium design | Approved and merged into `main` |
 | 2 — Checkout | Test Stripe Checkout, signed idempotent webhook, transactional stock, confirmation page/email with Resend fallback, order tracking by number + email | Approved and merged into `main`; external activation deferred by owner |
-| 3 — AI assistant | Floating streaming Claude Haiku widget, database product tools/cards, private order lookup, human leads, store-only guardrails, Postgres IP/session limits, bounded history/tokens, prompt caching, missing-key fallback and cost estimate | Implementation on `feat/ai-chatbot`; awaiting review |
-| 4 — Owner dashboard | Token-protected `/admin`, orders, transcripts, editable lead status, conversations/recommendations/add-to-cart/questions metrics | Pending |
+| 3 — AI assistant | Floating streaming Claude Haiku widget, database product tools/cards, private order lookup, human leads, store-only guardrails, Postgres IP/session limits, bounded history/tokens, prompt caching, missing-key fallback and cost estimate | Completed and merged into `main` when the owner resumed the coffee project |
+| 4 — Owner dashboard | Token-protected `/admin`, orders, transcripts, editable lead status, conversations/recommendations/add-to-cart/questions metrics | Implemented and validated on `feat/admin-dashboard`; awaiting review |
 | 5 — Tests | Complete unit, real-Postgres integration, mocked-Claude tool/safety tests and desktop/mobile E2E including chat and checkout | Pending; regression tests are also added in each phase |
 | 6 — Demo and portfolio | Seven-day cleanup and seed stock restoration under `DEMO_MODE`, Vercel + Neon guide, authorized deployment, screenshots and cover, finished README, GitHub metadata and final audit | Pending |
 
