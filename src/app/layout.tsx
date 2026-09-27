@@ -3,6 +3,7 @@ import { DM_Sans, Fraunces } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Toaster } from "@/components/ui/sonner";
+import { ChatWidget } from "@/components/chat/chat-widget";
 import "./globals.css";
 
 const display = Fraunces({
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <SiteFooter />
+        <ChatWidget />
         <Toaster position="bottom-left" />
       </body>
     </html>

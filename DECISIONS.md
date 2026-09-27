@@ -309,3 +309,126 @@ before installation. No account or external environment was configured.
 References: [Stripe Checkout](https://docs.stripe.com/api/checkout/sessions/create),
 [Stripe webhooks](https://docs.stripe.com/webhooks),
 [Resend idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys).
+
+## Phase 3 — AI shopping assistant
+
+### 24. Haiku interprets intent; tools own the facts
+
+**What.** Use Anthropic's TypeScript SDK and the pinned model
+`claude-haiku-4-5-20251001`, verified against the official model list. Haiku selects one
+tool for product search/details, order status, a written FAQ/policy or a bounded support
+response. Product cards contain database fields, never fields invented by the model.
+
+**Why.** A shop assistant must not make up prices, stock or refund promises. Asking a
+model to be accurate is weaker than controlling what the application can display. We
+discard model-authored prose and render verified tool output. A mock model can claim a
+product costs one cent, but our integration test still renders the database price.
+
+**Trade-off.** The model understands flexible wording and selects filters, but the final
+answer wording is curated. Questions outside the knowledge base lead to human help. This
+is less conversational than unrestricted generation, with a much smaller factual risk.
+Live-model selection quality still needs evaluation after credentials are configured.
+
+> **Interview:** "The model chooses what to look up. Our server decides which facts the customer sees."
+
+### 25. Streaming starts immediately, but facts wait for validation
+
+**What.** The API returns newline-delimited JSON: a status event, verified text chunks,
+then a completed message with any product/order cards. The Anthropic SDK streams the
+tool selection internally. We wait for complete arguments, validate with Zod and execute
+the tool before publishing answer content. There is no second model call or fake typing
+timer.
+
+**Why.** Forwarding partial raw tokens could expose a made-up price before a guardrail
+could check it. This approach keeps the interface responsive without trusting draft text.
+
+**Trade-off.** Time to the first useful answer includes tool selection and the database
+read. Each accepted turn has a deadline; errors offer retry/handoff and release its lease.
+
+### 26. Conversations belong to a private server-side session
+
+**What.** A random token in an HttpOnly cookie identifies a 24-hour conversation. The
+database stores only the token hash. Browser requests contain a new message and request
+ID, not a conversation ID, fabricated assistant history or system instruction.
+
+**Why.** Otherwise a visitor could change localStorage and pretend another conversation
+was theirs, or forge tool results in the history. Postgres stores the transcript and
+controls admission. A leased active-request ID prevents parallel tabs from spending
+multiple calls at once and allows recovery after a process failure.
+
+**Privacy.** Email addresses are redacted in saved chat text. The current message may
+still reach Anthropic if AI is enabled, as disclosed in the widget. The order tool requires
+both credentials explicitly in the current message, and returns no address or payment
+identifiers. Support-form fields are not sent to the model. Demo retention arrives in
+phase 6; use fictional personal data until then.
+
+### 27. The chat remains useful when AI is unavailable
+
+**What.** Without an API key, show an honest offline explanation with store/FAQ/tracking
+links and a working Talk to a human form. The form saves a consented lead in Postgres
+without invoking Claude, Resend or any messaging service.
+
+**Why.** A client should still be able to explore the portfolio when an integration is
+not connected or a spending limit has been reached. Explicit consent and an idempotency
+key prevent accidental duplicate submissions. The demo never promises an actual reply.
+
+### 28. Cost controls work across server instances
+
+**What.** Each session allows 20 turns; each IP gets 30 message attempts per 15 minutes.
+New sessions and leads are also limited. A global counter admits at most 250 AI attempts
+per UTC date. The model sees only the last 10 stored messages, at most 2,000 characters
+per historical message, and returns at most 400 tokens. Each turn makes one inference
+request, with zero automatic SDK retries.
+
+**Why.** A memory-only limiter resets on deployment and is different on each serverless
+instance. Atomic counters and session state in Postgres cover concurrency. The global
+cap also bounds attempts if someone rotates IPs. None of this replaces a provider-side
+monthly spending limit. Set that before enabling a public demo.
+
+**Caching.** The stable system prompt carries a five-minute ephemeral cache marker.
+Haiku 4.5 requires a 4,096-token cacheable prefix. If the combined tools/system prefix is
+shorter, the API simply does not cache it. We deliberately do not pad prompts, and the
+estimate below assumes no cache savings. The API usage counters distinguish input,
+output, cache writes and cache reads.
+
+### 29. Estimated conversation cost
+
+At implementation time, official Haiku 4.5 prices were $1 per million input tokens and
+$5 per million output tokens; five-minute cache writes cost $1.25 per million and reads
+$0.10 per million. These are API rates, not a subscription price.
+
+For a planning example, assume **six customer messages**, **4,000 input tokens** per
+request (instructions, tools and bounded history), **150 output tokens** for each tool
+selection, and no cache savings:
+
+`6 × ((4,000 × $1 / 1,000,000) + (150 × $5 / 1,000,000)) = $0.0285`
+
+That is roughly **three cents per six-message conversation** under those assumptions.
+At the same token volumes, 20 messages would cost $0.095. Actual usage depends on message
+length, history and caching; these numbers are estimates, not measured production bills
+or guaranteed ceilings. Long histories can cost more. The 250-attempt daily demo limit is
+a call limit, not a dollar limit.
+
+Completed responses accumulate estimated micro-US dollars in `Conversation.costMicrousd`
+using the SDK's actual usage fields. Provider failures or interrupted responses may still
+be billed without complete usage data, so this field is not an accounting ledger.
+
+Sources: [current models](https://platform.claude.com/docs/en/models/overview),
+[API pricing](https://platform.claude.com/docs/en/about-claude/pricing),
+[prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching).
+
+### 30. Store evidence for the owner's dashboard
+
+**What.** Each assistant reply records a bounded topic and any database product IDs it
+recommended. A separate timestamp records the first add-to-cart click on a recommendation,
+but only from that conversation's session. Leads have editable-ready OPEN/CONTACTED/CLOSED
+states. The dashboard itself remains phase 4.
+
+**Why.** These records can support conversation counts, common topics, most recommended
+products and the share of conversations leading to a cart addition. Capturing the event
+at the actual Add to cart button gives more useful evidence than counting text mentions.
+
+**Trade-off.** Click analytics are approximate browser interaction signals, not completed
+sales. Network failures may lose a click; analytics failure must never block shopping.
+Reopening a conversation reloads product cards from Postgres to keep displayed prices
+and stock current, rather than treating old recommendation snapshots as live facts.
