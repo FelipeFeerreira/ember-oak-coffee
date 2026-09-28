@@ -214,3 +214,14 @@ model Lead {
 
   @@index([status, createdAt])
 }
+
+// A successful UTC day is recorded in the same transaction as its cleanup.
+model DemoCleanupRun {
+  day                  String   @id
+  completedAt          DateTime @default(now())
+  cutoff               DateTime
+  deletedOrders        Int      @default(0)
+  deletedLeads         Int      @default(0)
+  deletedConversations Int      @default(0)
+  restoredProducts     Int      @default(0)
+}
