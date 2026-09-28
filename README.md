@@ -4,6 +4,8 @@ A specialty coffee storefront with an AI shopping guide and a private owner work
 
 [▶ Live demo — publication pending](docs/DEPLOYMENT.md) · [Video walkthrough — TODO](#video-walkthrough)
 
+[Source code on GitHub](https://github.com/FelipeFeerreira/ember-oak-coffee)
+
 ![Ember & Oak storefront and mobile coffee guide](docs/screenshots/cover.webp)
 
 Portfolio concept: brand, products and reviews are fictional.
@@ -13,7 +15,7 @@ Portfolio concept: brand, products and reviews are fictional.
 These are actual UI captures with staged fictional data in an isolated local database.
 Chat replies are illustrative fixtures, not live Claude responses; prices and order
 cards use database API results. Metrics are sample activity, not business results.
-Public deployment and external services remain pending approval.
+The source repository is public. Hosting and external services await account setup.
 
 | Storefront | Owner workspace |
 | --- | --- |

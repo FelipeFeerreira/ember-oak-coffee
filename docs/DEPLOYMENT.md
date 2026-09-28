@@ -1,9 +1,10 @@
 # Deployment: Vercel + Neon
 
-Status: prepared locally; no public deployment or remote repository exists yet.
-The owner deferred external setup. Obtain approval before creating accounts or the
-public repository, configuring external variables, enabling paid services, or deploying.
-Review the complete commit history and obtain approval before the first push.
+Status: the [public repository](https://github.com/FelipeFeerreira/ember-oak-coffee)
+contains the complete approved history on `main`. Its description and topics are set.
+The owner authorized publication and continued setup on September 28, 2026. Hosting
+is not deployed yet; Vercel authentication and the hosted database are still pending.
+The first push was completed after the history review and owner authorization.
 
 ## 1. Prepare the approved repository
 
@@ -16,15 +17,15 @@ git merge --no-ff chore/deploy-portfolio
 gh auth status
 ```
 
-The CLI is installed but currently unauthenticated. Sign in yourself with `gh auth login`.
-After repository-creation approval, create it without pushing:
+GitHub CLI is authenticated and the repository below already exists. These commands
+document the initial setup; do not create a duplicate repository:
 
 ```bash
 gh repo create ember-oak-coffee --public --source=. --remote=origin --description "A specialty coffee storefront with secure test checkout and an AI shopping assistant."
 ```
 
 After first-push approval: `git push -u origin main`.
-For GitHub Desktop, follow [PROJECT_PLAN.md](PROJECT_PLAN.md#github-connection-still-pending).
+For GitHub Desktop, follow [PROJECT_PLAN.md](PROJECT_PLAN.md#github-publication).
 Do not publish `.env.local`, database dumps or `portfolio-assets/`.
 
 ## 2. Create a dedicated Neon demo database
@@ -147,5 +148,5 @@ gh repo edit --description "A specialty coffee storefront with secure test check
 
 Review `git status`, `git log --oneline --all`, the secret scan and ignored asset paths
 before the approved final merge/push. Confirm a push to `main` produces the expected
-deployment. Record the real live URL and repository URL in the project handoff; neither
-has been provisioned during local preparation.
+deployment. Record the live URL in the project handoff once hosting is configured.
+The repository URL is https://github.com/FelipeFeerreira/ember-oak-coffee.
