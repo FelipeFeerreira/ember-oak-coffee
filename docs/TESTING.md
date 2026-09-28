@@ -97,3 +97,16 @@ build passed. npm audit reported zero vulnerabilities.
 The oversized-price regression failed before the fix and passed afterward. The
 phase status is recorded in the project plan. No account, deployment or paid
 provider call was part of this verification phase.
+
+## Phase 6 local verification
+
+**155 tests passed:** 63 unit/component, 52 real-Postgres integration and 40 desktop/mobile
+browser tests. Typecheck, lint and production build passed; npm audit reported zero
+vulnerabilities. Six new cleanup tests verify authentication and explicit demo gating,
+live-key rejection, the strict seven-day boundary, cascade deletion, price preservation,
+daily retry/concurrency behavior, and full transaction rollback after a failed stock update.
+
+The screenshot runner generated nine views plus a 1600 × 1200 cover from an isolated
+local database. Every optimized image is below 500,000 bytes. Images were visually
+reviewed; their staged-data provenance is recorded in the manifest. Deployed-site
+screenshots and real provider checks remain pending approved external setup.

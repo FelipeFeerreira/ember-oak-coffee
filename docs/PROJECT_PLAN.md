@@ -14,8 +14,8 @@ and deployment require approval. Never rewrite `main` history.
 | 2 — Checkout | Test Stripe Checkout, signed idempotent webhook, transactional stock, confirmation page/email with Resend fallback, order tracking by number + email | Approved and merged into `main`; external activation deferred by owner |
 | 3 — AI assistant | Floating streaming Claude Haiku widget, database product tools/cards, private order lookup, human leads, store-only guardrails, Postgres IP/session limits, bounded history/tokens, prompt caching, missing-key fallback and cost estimate | Completed and merged into `main` when the owner resumed the coffee project |
 | 4 — Owner dashboard | Token-protected `/admin`, orders, transcripts, editable lead status, conversations/recommendations/add-to-cart/questions metrics | Approved and merged into `main` |
-| 5 — Tests | Complete unit, real-Postgres integration, mocked-Claude tool/safety tests and desktop/mobile E2E including chat and checkout | Validated on `test/coverage`: 63 unit/component, 46 integration and 40 browser tests; awaiting review |
-| 6 — Demo and portfolio | Seven-day cleanup and seed stock restoration under `DEMO_MODE`, Vercel + Neon guide, authorized deployment, screenshots and cover, finished README, GitHub metadata and final audit | Pending |
+| 5 — Tests | Complete unit, real-Postgres integration, mocked-Claude tool/safety tests and desktop/mobile E2E including chat and checkout | Approved and merged into `main` |
+| 6 — Demo and portfolio | Seven-day cleanup and seed stock restoration under `DEMO_MODE`, Vercel + Neon guide, authorized deployment, screenshots and cover, finished README, GitHub metadata and final audit | Local preparation complete on `chore/deploy-portfolio`; review, external configuration, deployed captures, publication and final merge/push pending approval |
 
 Use one branch per phase and small Conventional Commits. Commit only after tests and
 typecheck pass. Merge an approved phase with a merge commit. Before the first push,
