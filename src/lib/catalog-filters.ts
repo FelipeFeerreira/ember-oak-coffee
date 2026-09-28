@@ -23,7 +23,7 @@ function multiEnum<const T extends readonly [string, ...string[]]>(values: T) {
     });
 }
 
-/** Whole-dollar price bound; invalid or negative input is ignored. */
+/** Whole-dollar price bound; ignore values that cannot fit the database's integer cents. */
 const priceBound = z
   .union([z.string(), z.array(z.string())])
   .optional()
@@ -31,7 +31,8 @@ const priceBound = z
     const value = Array.isArray(raw) ? raw[0] : raw;
     if (value === undefined || value.trim() === "") return undefined;
     const n = Number(value);
-    return Number.isFinite(n) && n >= 0 ? Math.floor(n) : undefined;
+    const dollars = Math.floor(n);
+    return Number.isFinite(n) && n >= 0 && dollars <= Math.floor(2_147_483_647 / 100) ? dollars : undefined;
   });
 
 const single = <const T extends readonly [string, ...string[]]>(values: T) =>

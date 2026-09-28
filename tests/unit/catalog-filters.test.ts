@@ -39,6 +39,14 @@ describe("parseCatalogFilters", () => {
     expect(parseCatalogFilters({ minPrice: "50", maxPrice: "20" })).toMatchObject({ minPrice: 20, maxPrice: 50 });
   });
 
+  it.each(["1e308", "21474837", "Infinity"])("ignores a price outside the database integer range: %s", (value) => {
+    expect(parseCatalogFilters({ minPrice: value, maxPrice: value })).toMatchObject({ minPrice: undefined, maxPrice: undefined });
+  });
+
+  it("accepts the largest whole-dollar bound that still fits integer cents", () => {
+    expect(buildCatalogWhere(parseCatalogFilters({ maxPrice: "21474836" }))).toEqual({ priceCents: { lte: 2147483600 } });
+  });
+
   it("counts active filters", () => {
     expect(countActiveFilters(parseCatalogFilters({ roast: ["LIGHT", "DARK"], minPrice: "10", sort: "name" }))).toBe(3);
   });
