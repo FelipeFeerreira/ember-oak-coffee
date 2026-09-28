@@ -484,3 +484,34 @@ promise a customer response. Payment confirmation stays exclusively in the signe
 webhook path. The dashboard selects only needed private fields, excluding addresses,
 payment identifiers and session hashes. Authenticated browser tests disable traces
 because request recordings could capture the login secret.
+
+### 34. Test observable guarantees at the right boundary
+
+**What.** Phase 5 reviews the tests against the requested behavior rather than adding
+duplicate assertions solely to increase a percentage. Unit tests exercise money,
+validation and strict tool contracts. Real-Postgres tests exercise locking, rollback,
+private data access, filters and persistent limits. Browser tests exercise the actual
+customer and owner interfaces on desktop and mobile.
+
+**Why.** A mocked database cannot prove that concurrent payments serialize correctly.
+A browser mock cannot prove that a recommendation's price came from Postgres. The
+price-card regression therefore runs a real database tool and renders the real card,
+while Claude's separately mocked prose advertises a false price. A continuous browser
+journey also edits localStorage to prove that stored prices do not control cart totals.
+
+**Limits.** Stripe, Resend and Claude network boundaries stay mocked. Tests do not
+claim to validate a real hosted payment, delivered email or every possible prompt
+attack. The testing guide maps each requirement to evidence and explains these limits.
+Authenticated owner tests disable request recordings and refuse remote targets to keep
+the local access token out of remote services and saved traces.
+
+### 35. Reject price filters that cannot fit database cents
+
+**Finding.** A finite JavaScript number can still be far larger than a PostgreSQL
+integer. The catalog previously accepted a query such as `maxPrice=1e308`, which then
+became an invalid database bound when converted from dollars to cents.
+
+**Fix.** Ignore price bounds above the largest whole-dollar value that fits the
+database's signed 32-bit cent field. This follows the catalog's existing behavior of
+ignoring malformed filters. Regression tests first reproduced the failure, then verified
+both oversized input rejection and acceptance of the largest valid boundary.

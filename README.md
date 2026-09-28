@@ -45,6 +45,9 @@ npm run dev                     # http://localhost:3100
 
 ## Tests
 
+See [the testing guide](docs/TESTING.md) for the requirement-to-test map, database
+isolation, browser setup and the distinction between mocks and live provider checks.
+
 ```bash
 npm test            # unit and component tests (Vitest)
 npm run test:integration # isolated local Postgres tests; Docker must be running
