@@ -3,7 +3,7 @@ import { DM_Sans, Fraunces } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Toaster } from "@/components/ui/sonner";
-import { ChatWidget } from "@/components/chat/chat-widget";
+import { StoreChrome } from "@/components/layout/store-chrome";
 import "./globals.css";
 
 const display = Fraunces({
@@ -37,12 +37,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
-        <SiteHeader />
-        <main id="main" className="flex-1">
+        <StoreChrome header={<SiteHeader />} footer={<SiteFooter />}>
           {children}
-        </main>
-        <SiteFooter />
-        <ChatWidget />
+        </StoreChrome>
         <Toaster position="bottom-left" />
       </body>
     </html>

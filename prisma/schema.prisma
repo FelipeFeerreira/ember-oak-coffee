@@ -189,6 +189,17 @@ enum LeadStatus {
   CLOSED
 }
 
+// Opaque owner sessions. Raw tokens never enter the database.
+model AdminSession {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  secretHash String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
 model Lead {
   id             String        @id @default(cuid())
   requestId      String        @unique
