@@ -8,6 +8,10 @@ phases: test, typecheck, build and audit each phase, report results, and wait fo
 before the next one. Account creation, external environment configuration, paid actions
 and deployment require approval. Never rewrite `main` history.
 
+On September 28, 2026, the owner authorized repository creation, publication and
+continued setup without further confirmation. Required account authentication must
+still be completed by the owner. No provider credentials belong in conversation or Git.
+
 | Phase | Deliverable | Current state |
 | --- | --- | --- |
 | 1 — Store | Home, filtered catalog, product detail, persistent cart, About, FAQ, seeded Postgres products, accessible premium design | Approved and merged into `main` |
@@ -15,17 +19,21 @@ and deployment require approval. Never rewrite `main` history.
 | 3 — AI assistant | Floating streaming Claude Haiku widget, database product tools/cards, private order lookup, human leads, store-only guardrails, Postgres IP/session limits, bounded history/tokens, prompt caching, missing-key fallback and cost estimate | Completed and merged into `main` when the owner resumed the coffee project |
 | 4 — Owner dashboard | Token-protected `/admin`, orders, transcripts, editable lead status, conversations/recommendations/add-to-cart/questions metrics | Approved and merged into `main` |
 | 5 — Tests | Complete unit, real-Postgres integration, mocked-Claude tool/safety tests and desktop/mobile E2E including chat and checkout | Approved and merged into `main` |
-| 6 — Demo and portfolio | Seven-day cleanup and seed stock restoration under `DEMO_MODE`, Vercel + Neon guide, authorized deployment, screenshots and cover, finished README, GitHub metadata and final audit | Local preparation approved for merge into `main`; external configuration, deployed captures and publication remain deferred; first push requires approval |
+| 6 — Demo and portfolio | Seven-day cleanup and seed stock restoration under `DEMO_MODE`, Vercel + Neon guide, authorized deployment, screenshots and cover, finished README, GitHub metadata and final audit | Local work merged into `main` and published on GitHub; hosting authentication, hosted database, provider activation and deployed captures remain pending |
 
 Use one branch per phase and small Conventional Commits. Commit only after tests and
 typecheck pass. Merge an approved phase with a merge commit. Before the first push,
 show the full history and receive approval. Public repository target: `ember-oak-coffee`.
 
-## GitHub connection still pending
+## GitHub publication
 
-The GitHub CLI is installed but was not authenticated during phase 2. No remote repository
-has been created. The owner can authenticate locally using `gh auth login`, or use
-GitHub Desktop after approving repository creation and the first push:
+The public repository is [FelipeFeerreira/ember-oak-coffee](https://github.com/FelipeFeerreira/ember-oak-coffee).
+GitHub CLI is authenticated; `origin` is configured and `main` tracks `origin/main`.
+The complete commit history was reviewed and pushed after authorization. The English
+description and all requested topics are configured. The website field awaits a live URL.
+
+For GitHub Desktop on another workstation, clone this repository. The following steps
+document the alternative initial publication workflow; do not publish a duplicate:
 
 1. Choose **File → Add local repository** and select this `portfolio2` folder.
 2. Review the **History** tab and approve the full commit history before publishing.
