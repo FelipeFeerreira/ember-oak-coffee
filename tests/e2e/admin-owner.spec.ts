@@ -9,6 +9,7 @@ test("owner can review each workspace view and revoke the session", async ({ pag
   const token = process.env.ADMIN_TOKEN;
   test.skip(!token || token.length < 32, "Configure local owner access with npm run admin:token.");
   await page.goto("/admin");
+  test.skip(!["localhost", "127.0.0.1", "[::1]"].includes(new URL(page.url()).hostname), "Never send a local owner token to a remote browser-test target.");
   const response = await page.request.post("/api/admin/session", {
     headers: { origin: new URL(page.url()).origin }, data: { token },
   });
