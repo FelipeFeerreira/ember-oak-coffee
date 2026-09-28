@@ -1,0 +1,49 @@
+{
+  "capturedAt": "2026-09-28T01:56:24.877Z",
+  "source": "isolated local preview",
+  "deviceScaleFactor": 2,
+  "chat": "Illustrative intercepted replies; product price fetched from the real quote API. No AI calls.",
+  "data": "Fictional demonstration data; not business performance or payment evidence.",
+  "images": [
+    {
+      "name": "01-home",
+      "bytes": 467462
+    },
+    {
+      "name": "02-catalog",
+      "bytes": 388352
+    },
+    {
+      "name": "03-product",
+      "bytes": 239894
+    },
+    {
+      "name": "04-cart",
+      "bytes": 78906
+    },
+    {
+      "name": "05-chat-recommendations",
+      "bytes": 74816
+    },
+    {
+      "name": "06-chat-order",
+      "bytes": 73300
+    },
+    {
+      "name": "07-admin",
+      "bytes": 137716
+    },
+    {
+      "name": "08-mobile-home",
+      "bytes": 497312
+    },
+    {
+      "name": "09-mobile-chat",
+      "bytes": 58574
+    },
+    {
+      "name": "cover",
+      "bytes": 97426
+    }
+  ]
+}

@@ -15,6 +15,6 @@ export default defineConfig({
   datasource: {
     // `prisma generate` does not need a database, so an empty fallback keeps
     // it working on a fresh clone before .env.local exists.
-    url: process.env.DATABASE_URL ?? "",
+    url: process.env.DIRECT_URL || process.env.DATABASE_URL || "",
   },
 });

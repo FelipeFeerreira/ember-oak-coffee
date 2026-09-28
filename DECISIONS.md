@@ -515,3 +515,41 @@ became an invalid database bound when converted from dollars to cents.
 database's signed 32-bit cent field. This follows the catalog's existing behavior of
 ignoring malformed filters. Regression tests first reproduced the failure, then verified
 both oversized input rejection and acceptance of the largest valid boundary.
+
+### 36. Reset disposable demo data once per UTC day
+
+**Decision.** A protected daily endpoint runs only with `DEMO_MODE=true`. It removes
+records older than seven days and restores the seeded catalog's stock. A unique day
+record and every mutation share one PostgreSQL transaction. Concurrent requests compete
+for that record, so only one resets stock; a failure also rolls back its marker.
+
+**Why.** Public demos accumulate abandoned orders and conversations. A simple retry
+must not replenish stock again after visitors have made new purchases. Real-database
+tests cover the retention boundary, cascade behavior, retries, concurrency and rollback.
+The cleanup preserves prices, custom products and newer records, and rejects live
+Stripe credentials. It is explicitly unsuitable for retaining real merchant orders.
+
+### 37. Separate migrations from runtime connections and deployments
+
+**Decision.** Prisma CLI uses `DIRECT_URL` when supplied; server queries keep the pooled
+`DATABASE_URL`. Migrations run as an explicit deployment step, not on every preview
+build. Test runners override both URLs to their protected local test database.
+
+**Why.** A serverless runtime benefits from pooled connections, while schema changes
+deserve a direct connection and a deliberate release step. Preview builds must never
+modify production data. This adds no external account or service configuration locally.
+
+### 38. Make portfolio images reproducible and honest about fixtures
+
+**Decision.** Playwright captures the real UI at scale factor 2. A separate local
+`ember_oak_capture_test` database holds fictional activity for the owner dashboard.
+Browser-intercepted chat replies avoid paid API calls, while price and order cards load
+their numbers from the app's real database APIs. The manifest and README disclose this.
+The local fixture seeder refuses every other database, especially remote targets.
+
+**Why.** An empty dashboard cannot explain the feature, but invented business results
+must not be presented as actual traction. The screenshot script also supports a deployed
+demo with real test-flow data and separately approved live AI calls. Authentication uses
+a POST body and an ephemeral session, with no token URL, trace, login capture or saved
+cookies. Sharp creates small WebP documentation images and a 1600 × 1200 cover from the
+screenshots; high-quality originals stay outside Git.
