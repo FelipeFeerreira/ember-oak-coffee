@@ -7,7 +7,7 @@ const target = new URL(databaseUrl);
 if (!["localhost", "127.0.0.1", "[::1]"].includes(target.hostname) || !target.pathname.endsWith("_test")) {
   throw new Error("Integration tests require a local database whose name ends in _test.");
 }
-const env = { ...process.env, DATABASE_URL: databaseUrl, NODE_ENV: "test", RESEND_API_KEY: "", ANTHROPIC_API_KEY: "",
+const env = { ...process.env, DATABASE_URL: databaseUrl, DIRECT_URL: databaseUrl, NODE_ENV: "test", RESEND_API_KEY: "", ANTHROPIC_API_KEY: "",
   STRIPE_SECRET_KEY: "sk_test_local_fixture", STRIPE_WEBHOOK_SECRET: "whsec_local_fixture",
   NEXT_PUBLIC_SITE_URL: "http://localhost:3100" };
 for (const args of [
