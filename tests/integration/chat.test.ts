@@ -105,6 +105,25 @@ describe("private persisted chat", () => {
 });
 
 describe("database tools, prices and handoff", () => {
+  it("combines catalog filters against Postgres and excludes unavailable stock", async () => {
+    await db.product.update({ where: { id: productId }, data: { roastLevel: "MEDIUM", acidity: "LOW" } });
+    const filters = { query: "DATABASE coffee", type: "COFFEE", roast: "MEDIUM", brew: "ESPRESSO", acidity: "LOW", maxPriceCents: 2735 };
+    expect((await executeChatTool("search_products", filters, "Coffee preferences")).products?.map(product => product.id)).toEqual([productId]);
+    for (const change of [{ roast: "DARK" }, { brew: "COLD_BREW" }, { acidity: "HIGH" }, { type: "ACCESSORY" }, { maxPriceCents: 2734 }]) {
+      expect((await executeChatTool("search_products", { ...filters, ...change }, "Coffee preferences")).products).toEqual([]);
+    }
+    await db.product.update({ where: { id: productId }, data: { stock: 0 } });
+    expect((await executeChatTool("search_products", filters, "Coffee preferences")).handoff).toBe(true);
+  });
+  it("blocks the daily provider budget before calling Claude or consuming a conversation turn", async () => {
+    process.env.ANTHROPIC_API_KEY = "local-integration-fixture";
+    await db.rateLimit.create({ data: { key: `chat-global:${new Date().toISOString().slice(0, 10)}`, count: 250, expiresAt: new Date(Date.now() + 86_400_000) } });
+    const { conversation, cookie } = await createConversation();
+    const response = await chat(request("/api/chat", cookie, { requestId: randomUUID(), message: "Help me choose" }));
+    expect(response.status).toBe(429); expect(mocked.stream).not.toHaveBeenCalled();
+    expect((await db.conversation.findUniqueOrThrow({ where: { id: conversation.id } })).messageCount).toBe(0);
+    expect(await db.chatMessage.count()).toBe(0);
+  });
   it("renders the database price in a card even when Claude fabricates a cheaper price", async () => {
     process.env.ANTHROPIC_API_KEY = "local-integration-fixture";
     mocked.final.mockResolvedValue({ stop_reason: "tool_use", content: [
