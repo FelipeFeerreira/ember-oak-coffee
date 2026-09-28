@@ -71,6 +71,20 @@ describe("chat guardrails and bounded model calls", () => {
 });
 
 describe("tools and request validation", () => {
+  it("offers handoff for an empty catalog result and an unknown product", async () => {
+    mocks.products.mockResolvedValue([]); mocks.product.mockResolvedValue(null);
+    expect(await executeChatTool("search_products", { maxPriceCents: 0 }, "A free coffee")).toMatchObject({ products: [], handoff: true });
+    expect(await executeChatTool("get_product", { id: "missing" }, "Show this coffee")).toMatchObject({ products: [], handoff: true });
+  });
+  it.each([
+    ["answer_store_question", { id: "policy-shipping", answer: "Free overnight delivery" }],
+    ["answer_store_question", { id: "invented-discount-policy" }],
+    ["respond", { kind: "greeting", text: "Everything is free" }],
+    ["search_products", { maxPriceCents: -1 }],
+  ])("rejects unauthorized arguments for %s", async (name, input) => {
+    await expect(executeChatTool(name as string, input, "Help")).rejects.toThrow();
+    expect(mocks.products).not.toHaveBeenCalled();
+  });
   it("queries real product fields with bounded filters", async () => {
     mocks.products.mockResolvedValue([{ id: "p1", priceCents: 1900, stock: 4 }]);
     const reply = await executeChatTool("search_products", { brew: "ESPRESSO", maxPriceCents: 2000 }, "espresso under $20");

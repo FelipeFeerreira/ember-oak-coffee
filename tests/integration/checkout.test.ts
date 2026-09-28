@@ -77,6 +77,22 @@ afterAll(async () => {
 });
 
 describe("signed payment processing against PostgreSQL", () => {
+  it("rejects an old signed event before recording a payment", async () => {
+    const order = await makeOrder(); const payload = JSON.stringify(paidEvent(order));
+    const signature = stripe.webhooks.generateTestHeaderString({ payload, secret: process.env.STRIPE_WEBHOOK_SECRET!, timestamp: 1 });
+    const response = await webhook(new Request("http://localhost:3100/api/stripe/webhook", { method: "POST", headers: { "stripe-signature": signature }, body: payload }));
+    expect(response.status).toBe(400);
+    expect((await db.order.findUniqueOrThrow({ where: { id: order.id } })).status).toBe("PENDING");
+    expect(await db.stripeEvent.count()).toBe(0);
+  });
+  it.each(["currency", "client_reference_id"] as const)("rolls back a signed payment with a mismatched %s", async (field) => {
+    const order = await makeOrder(); const event = paidEvent(order);
+    event.data.object[field] = field === "currency" ? "eur" : "another-order";
+    expect((await deliver(event)).status).toBe(500);
+    expect((await db.order.findUniqueOrThrow({ where: { id: order.id } })).status).toBe("PENDING");
+    expect((await db.product.findUniqueOrThrow({ where: { id: productId } })).stock).toBe(10);
+    expect(await db.stripeEvent.count()).toBe(0);
+  });
   it("rejects a forged signature before touching orders or stock", async () => {
     const order = await makeOrder();
     expect((await deliver(paidEvent(order), true)).status).toBe(400);
