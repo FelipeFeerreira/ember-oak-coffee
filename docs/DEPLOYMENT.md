@@ -1,9 +1,10 @@
 # Deployment: Vercel + Neon
 
 Status: the [public repository](https://github.com/FelipeFeerreira/ember-oak-coffee)
-contains the complete approved history on `main`. Its description and topics are set.
-The owner authorized publication and continued setup on September 28, 2026. Hosting
-is not deployed yet; Vercel authentication and the hosted database are still pending.
+contains the complete approved history on `main`. Its description, topics and live
+site URL are set. The owner authorized publication and continued setup on September 28,
+2026. Vercel deployment and the Neon database are active; the catalog has been seeded.
+Optional provider activation (Stripe, Anthropic, Resend) remains pending approval.
 The first push was completed after the history review and owner authorization.
 
 ## 1. Prepare the approved repository
