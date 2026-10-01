@@ -19,7 +19,7 @@ still be completed by the owner. No provider credentials belong in conversation 
 | 3 — AI assistant | Floating streaming Claude Haiku widget, database product tools/cards, private order lookup, human leads, store-only guardrails, Postgres IP/session limits, bounded history/tokens, prompt caching, missing-key fallback and cost estimate | Completed and merged into `main` when the owner resumed the coffee project |
 | 4 — Owner dashboard | Token-protected `/admin`, orders, transcripts, editable lead status, conversations/recommendations/add-to-cart/questions metrics | Approved and merged into `main` |
 | 5 — Tests | Complete unit, real-Postgres integration, mocked-Claude tool/safety tests and desktop/mobile E2E including chat and checkout | Approved and merged into `main` |
-| 6 — Demo and portfolio | Seven-day cleanup and seed stock restoration under `DEMO_MODE`, Vercel + Neon guide, authorized deployment, screenshots and cover, finished README, GitHub metadata and final audit | Local work merged into `main` and published on GitHub; hosting authentication, hosted database, provider activation and deployed captures remain pending |
+| 6 — Demo and portfolio | Seven-day cleanup and seed stock restoration under `DEMO_MODE`, Vercel + Neon guide, authorized deployment, screenshots and cover, finished README, GitHub metadata and final audit | Deployed to Vercel with Neon database seeded; README live-demo link updated; optional provider activation and deployed screenshots/video remain pending |
 
 Use one branch per phase and small Conventional Commits. Commit only after tests and
 typecheck pass. Merge an approved phase with a merge commit. Before the first push,

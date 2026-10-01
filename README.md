@@ -2,7 +2,7 @@
 
 A specialty coffee storefront with an AI shopping guide and a private owner workspace.
 
-[▶ Live demo — publication pending](docs/DEPLOYMENT.md) · [Video walkthrough — TODO](#video-walkthrough)
+[▶ Live demo](https://ember-oak-coffee-one.vercel.app) · [Video walkthrough — TODO](#video-walkthrough)
 
 [Source code on GitHub](https://github.com/FelipeFeerreira/ember-oak-coffee)
 
