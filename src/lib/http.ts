@@ -14,7 +14,15 @@ export function privateJson(data: unknown, status = 200) {
 }
 
 export function requireSameOrigin(request: Request) {
-  if (request.headers.get("origin") !== new URL(request.url).origin) {
-    throw new CheckoutError("Please submit this request from the store.", 403);
+  const origin = request.headers.get("origin");
+  const target = new URL(request.url).origin;
+  if (origin === target) return;
+  // Same-origin fetch may not send an Origin header; fall back to Referer.
+  const referer = request.headers.get("referer");
+  if (!origin && referer) {
+    try {
+      if (new URL(referer).origin === target) return;
+    } catch { /* malformed referer */ }
   }
+  throw new CheckoutError("Please submit this request from the store.", 403);
 }
