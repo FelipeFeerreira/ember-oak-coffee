@@ -150,3 +150,9 @@ The fictional brand, product names and copy are original portfolio work.
 | Roasting drum | [Scott Soltys-Curry](https://unsplash.com/photos/7p4SmQtWFHU) |
 | Fresh bag | [Nathan Dumlao](https://unsplash.com/photos/PX1IrPsimHE) |
 | About | [Tim Mossholder](https://unsplash.com/photos/YC6RVdoTtIk) |
+
+---
+
+## License
+
+MIT - see [LICENSE](LICENSE). You may use, modify and redistribute this code with attribution.
