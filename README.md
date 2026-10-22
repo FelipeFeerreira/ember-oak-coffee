@@ -2,7 +2,7 @@
 
 A specialty coffee storefront with an AI shopping guide and a private owner workspace.
 
-[▶ Live demo](https://ember-oak-coffee-one.vercel.app)
+[▶ Live demo](https://ember-oak-coffee-one.vercel.app) · [Video walkthrough — TODO](#video-walkthrough)
 
 [Source code on GitHub](https://github.com/FelipeFeerreira/ember-oak-coffee)
 
@@ -124,11 +124,6 @@ email. [TESTING.md](docs/TESTING.md) maps requirements to evidence and limitatio
 signed events, cron authentication, GitHub automatic deployment and approval steps.
 [PROJECT_PLAN.md](docs/PROJECT_PLAN.md) tracks progress.
 [DECISIONS.md](DECISIONS.md) explains the implementation in plain language.
-
-## Video walkthrough
-
-TODO: record and link the storefront, assistant and owner dashboard walkthrough after
-the deployed demo is approved and available.
 
 ## Photo credits
 
