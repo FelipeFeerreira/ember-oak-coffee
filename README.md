@@ -10,6 +10,13 @@ A specialty coffee storefront with an AI shopping guide and a private owner work
 
 Portfolio concept: brand, products and reviews are fictional.
 
+| | |
+|:--|:--|
+| **Live demo** | [ember-oak-coffee-one.vercel.app](https://ember-oak-coffee-one.vercel.app) |
+| **Screenshots** | [docs/screenshots](docs/screenshots) |
+| **Stack** | Next.js · React · TypeScript · PostgreSQL · Prisma · Stripe (test mode) · Anthropic API |
+| **License** | MIT — [LICENSE](LICENSE) |
+
 ## Screenshots
 
 These are actual UI captures with staged fictional data in an isolated local database.
@@ -152,6 +159,12 @@ The fictional brand, product names and copy are original portfolio work.
 | About | [Tim Mossholder](https://unsplash.com/photos/YC6RVdoTtIk) |
 
 ---
+
+## What I would do next
+
+- Add production tax and shipping rules so checkout can leave Stripe test mode.
+- Cache product and checkout data so the catalog survives a cold start without a database round trip.
+- Add Playwright coverage for the cart → checkout → webhook confirmation path.
 
 ## License
 
