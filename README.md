@@ -14,6 +14,7 @@ Portfolio concept: brand, products and reviews are fictional.
 |:--|:--|
 | **Live demo** | [ember-oak-coffee-one.vercel.app](https://ember-oak-coffee-one.vercel.app) |
 | **Screenshots** | [docs/screenshots](docs/screenshots) |
+| **CI** | [![CI](https://github.com/FelipeFeerreira/ember-oak-coffee/actions/workflows/ci.yml/badge.svg)](https://github.com/FelipeFeerreira/ember-oak-coffee/actions/workflows/ci.yml) |
 | **Stack** | Next.js · React · TypeScript · PostgreSQL · Prisma · Stripe (test mode) · Anthropic API |
 | **License** | MIT — [LICENSE](LICENSE) |
 
